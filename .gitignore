@@ -72,3 +72,4 @@ ui_*.h
 .idea/
 *.swp
 *.swo
+.qtcreator/CMakeLists.txt.user
