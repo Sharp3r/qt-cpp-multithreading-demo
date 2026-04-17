@@ -28,19 +28,22 @@ void WorkerThread::run()
     }
 
     // Симулюємо важку обробку: 10 кроків по 200ms
-    for (int i = 0; i <= 10; ++i) {
+    int step_count = 10;
+    auto emitFinished = [this](const QString &name, qint64 size) {
+        emit finished(QString("Processed: %1 (%2 bytes)").arg(name).arg(size));
+    };
+
+    for (int i = 0; i <= step_count; ++i) {
         // Перевіряємо прапор зупинки на кожній ітерації
         if (m_stopRequested.load()) {
             qDebug() << "Processing canceled";
+            emitFinished(info.fileName(), i * info.size() / step_count);
             return;
         }
 
         // msleep — зупиняє ПОТОЧНИЙ потік (новий), не main thread
         QThread::msleep(200);
-        emit progressChanged(i * 10);
+        emit progressChanged(i * step_count);
     }
-
-    emit finished(QString("Processed: %1 (%2 bytes)")
-                      .arg(info.fileName())
-                      .arg(info.size()));
+    emitFinished(info.fileName(), info.size());
 }
