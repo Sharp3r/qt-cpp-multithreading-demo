@@ -10,6 +10,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Concurrent)
 add_executable(threading_demo
     main.cpp
     worker_thread.cpp
+    worker_thread.h
 )
 
 target_link_libraries(threading_demo
