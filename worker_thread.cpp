@@ -6,6 +6,9 @@ WorkerThread::WorkerThread(const QString &filename, QObject *parent)
     : QThread(parent), m_filename(filename)
 {}
 
+WorkerThread::~WorkerThread()
+{}
+
 void WorkerThread::requestStop()
 {
     m_stopRequested.store(true);
