@@ -43,6 +43,7 @@ void WorkerThread::run()
 
         // msleep — зупиняє ПОТОЧНИЙ потік (новий), не main thread
         QThread::msleep(200);
+        QThread::msleep(500);
         emit progressChanged(i * step_count);
     }
     emitFinished(info.fileName(), info.size());
