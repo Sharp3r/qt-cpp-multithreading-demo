@@ -12,8 +12,7 @@ void ThreadController::startProcessing(const QString &filename)
 
     if (m_worker) {
         m_worker->requestStop();
-        m_worker->wait();
-        m_worker->deleteLater();
+        return;
     }
 
     m_worker = new WorkerThread(filename, this);
@@ -36,9 +35,13 @@ void ThreadController::startProcessing(const QString &filename)
     connect(m_worker, &WorkerThread::finished,
             m_worker, &QObject::deleteLater);
 
+    connect(m_worker, &QThread::finished,
+            this, [this]() { m_worker = nullptr; });
+
     setProgress(0);
     setStatus("Processed: " + filename);
     setRunning(true);
+
     m_worker->start();
 }
 

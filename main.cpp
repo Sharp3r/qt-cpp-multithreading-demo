@@ -1,33 +1,24 @@
-#include "worker_thread.h"
-#include <QCoreApplication>
-#include <QTimer>
-#include <QDebug>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include "threadcontroller.h"
 
 int main(int argc, char* argv[])
 {
-    QCoreApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
 
-    auto* worker = new WorkerThread("test.txt");
+    qmlRegisterType<ThreadController>("ThreadingDemo", 1, 0, "ThreadController");
 
-    QObject::connect(worker, &WorkerThread::progressChanged, [](int p) {
-        qDebug() << "Progress:" << p << "%";
-    });
+    ThreadController controller;
 
-    QObject::connect(worker, &WorkerThread::finished, [&app](const QString& result) {
-        qDebug() << "Ready:" << result;
-        app.quit();
-    });
+    QQmlApplicationEngine engine;
 
-    QObject::connect(worker, &WorkerThread::errorOccurred, [&app](const QString& err) {
-        qDebug() << "Error:" << err;
-        app.quit();
-    });
+    engine.rootContext()->setContextProperty("controller", &controller);
 
-    // Важливо: видаляємо об'єкт після завершення потоку
-    QObject::connect(worker, &WorkerThread::finished,
-                     worker, &QObject::deleteLater);
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
-    worker->start(); // Запускає новий потік та викликає run()
+    if (engine.rootObjects().isEmpty())
+        return -1;
 
     return app.exec();
 }
