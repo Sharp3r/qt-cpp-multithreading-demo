@@ -18,7 +18,7 @@
 ## Стек
 
 - **C++17**
-- **Qt 6.x** (Core, Gui, Quick, Concurrent)
+- **Qt 6.x** (Core, Gui, Quick, Concurrent, Qml)
 - **QML** для UI
 - **CMake 3.16+**
 
@@ -43,15 +43,28 @@ cmake --build . -j$(nproc)
 ## Структура проєкту
 
 ```
+├── test.txt                     ← файл з рандомними даними для тестових цілей
 ├── CMakeLists.txt
-├── threadcontroller.h/cpp   ← C++/QML bridge (єдина точка входу для UI)
-├── worker_thread.h/cpp      ← Trainee: QThread subclass
-├── task_queue.h/cpp         ← Junior: mutex + wait condition
-├── task_processor.h/cpp     ← Middle: QThreadPool
-├── advanced_processor.h/cpp ← Senior: std::future + cache
-├── thread_pool.h/cpp        ← Senior+: custom priority pool
-└── qml/                     ← весь UI
-    ├── main.qml
+├── controller/
+│   ├── CMakeLists.txt
+│   └── threadcontroller.h/cpp   ← C++/QML bridge (єдина точка входу для UI)
+├── worker/   
+│   ├── CMakeLists.txt
+│   └── worker_thread.h/cpp      ← Trainee: QThread subclassc
+├── task_queue/
+│   ├── CMakeLists.txt
+│   └── task_queue.h/cpp         ← Junior: mutex + wait condition
+├── task_processor/
+│   ├── CMakeLists.txt
+│   └── task_processor.h/cpp     ← Middle: QThreadPool
+├── advanced_processor/
+│   ├── CMakeLists.txt
+│   └── advanced_processor.h/cpp ← Senior: std::future + cache
+├── thread_pool/
+│   ├── CMakeLists.txt
+│   └── thread_pool.h/cpp        ← Senior+: custom priority pool
+└── ui/                          ← весь UI
+    ├── Main.qml
     ├── TaskCard.qml
     ├── ThreadPoolView.qml
     ├── CacheStats.qml
