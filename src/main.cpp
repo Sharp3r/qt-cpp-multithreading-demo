@@ -1,21 +1,17 @@
+#include "ThreadController.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include "threadcontroller.h"
 
 int main(int argc, char* argv[])
 {
     QGuiApplication app(argc, argv);
 
-    qmlRegisterType<ThreadController>("ThreadingDemo", 1, 0, "ThreadController");
-
-    ThreadController controller;
-
     QQmlApplicationEngine engine;
 
-    engine.rootContext()->setContextProperty("controller", &controller);
+    qmlRegisterType<ThreadController>("ThreadingDemo", 1, 0, "ThreadController");
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.loadFromModule("ThreadingDemo.UI", "Main");
 
     if (engine.rootObjects().isEmpty())
         return -1;

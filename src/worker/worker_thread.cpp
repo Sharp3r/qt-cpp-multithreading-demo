@@ -48,7 +48,7 @@ void WorkerThread::run()
     for (int i = 0; i <= step_count; ++i) {
         // Перевіряємо прапор зупинки на кожній ітерації
         if (m_stopRequested.load()) {
-            qDebug() << "Processing canceled";
+            qDebug() << "[Worker processing canceled]" << threadId() << this;
             emitFinished(info.fileName(), i * info.size() / step_count);
             return;
         }

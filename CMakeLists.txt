@@ -6,19 +6,26 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Concurrent Gui Quick)
+find_package(Qt6 REQUIRED COMPONENTS Core Concurrent Gui Quick Qml)
 
-add_executable(threading_demo
-    main.cpp
-    worker_thread.cpp
-    worker_thread.h
-    ThreadController.cpp
-    ThreadController.h
-    resources.qrc
-)
+qt_policy(SET QTP0001 NEW)
+qt_policy(SET QTP0004 NEW)
+qt_standard_project_setup()
+
+qt_add_executable(threading_demo)
+
+add_subdirectory(src)
 
 target_link_libraries(threading_demo
-    PRIVATE Qt6::Core Qt6::Concurrent Qt6::Gui Qt6::Quick
+    PRIVATE
+        Qt6::Core
+        Qt6::Concurrent
+        Qt6::Gui
+        Qt6::Quick
+        Qt6::Qml
+        controller
+        worker
+        demo_uiplugin
 )
 
 add_custom_command(TARGET threading_demo POST_BUILD

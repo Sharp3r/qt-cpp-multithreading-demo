@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls.Material
+import ThreadingDemo 1.0
 
 ApplicationWindow {
     id: root
@@ -10,6 +11,10 @@ ApplicationWindow {
     height: 420
     visible: true
     title: "Threading Demo — Trainee"
+
+    ThreadController {
+        id: controller
+    }
 
     ColumnLayout {
         anchors.fill: parent
