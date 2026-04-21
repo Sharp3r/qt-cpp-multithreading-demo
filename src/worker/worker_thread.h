@@ -8,6 +8,7 @@ class WorkerThread : public QThread
     Q_OBJECT
 public:
     explicit WorkerThread(const QString& filename, QObject* parent = nullptr);
+    ~WorkerThread() override;
 
     // Метод для безпечної зупинки ззовні
     void requestStop();
