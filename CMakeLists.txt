@@ -20,3 +20,9 @@ add_executable(threading_demo
 target_link_libraries(threading_demo
     PRIVATE Qt6::Core Qt6::Concurrent Qt6::Gui Qt6::Quick
 )
+
+add_custom_command(TARGET threading_demo POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_SOURCE_DIR}/test.txt
+        $<TARGET_FILE_DIR:threading_demo>
+)
