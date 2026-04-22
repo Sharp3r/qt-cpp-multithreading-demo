@@ -3,12 +3,21 @@
 #include <QThread>
 #include <QFileInfo>
 
+QString threadId()
+{
+    return QString("0x%1").arg((quintptr)QThread::currentThreadId(), 0, 16);
+}
+
 TaskQueue::TaskQueue(QObject* parent)
     : QObject(parent)
-{}
+{
+    qDebug() << "[TaskQueue constructed]" << threadId() << this;
+}
 
 TaskQueue::~TaskQueue()
-{}
+{
+    qDebug() << "[TaskQueue destroyed]" << threadId() << this;
+}
 
 void TaskQueue::enqueue(const Task& task)
 {
@@ -16,38 +25,45 @@ void TaskQueue::enqueue(const Task& task)
     // При виході з блоку {} mutex автоматично звільняється.
     // Це захищає від забутого unlock() та від виключень.
     QMutexLocker locker(&m_mutex);
+    qDebug() << "[TaskQueue enqueue]" << task.filename << threadId() << this;
     m_queue.enqueue(task);
 
-    // Будимо потік-споживач, якщо він чекає на wakeOne()
+    // Будимо потік, якщо він чекає на wakeOne()
     m_condition.wakeOne();
 }   // locker виходить зі скоупу — mutex звільняється тут
 
 void TaskQueue::stop()
 {
     QMutexLocker locker(&m_mutex);
-    m_running.store(false);
+    qDebug() << "[TaskQueue stop]" << threadId() << this;
+    m_running = false;
     m_condition.wakeAll(); // будимо всіх, щоб вони побачили m_running=false
 }
 
 void TaskQueue::process()
 {
-    qDebug() << "Worker запущено в потоці:" << QThread::currentThread();
+    qDebug() << "[TaskQueue process]" << threadId() << this;
 
-    while (m_running.load()) {
+    while (true) {
         Task task;
         {
             // Окремий блок для мінімального утримання mutex
             QMutexLocker locker(&m_mutex);
+            qDebug() << "[TaskQueue process]" << threadId() << this << "Mutex locked!";
 
             // wait() атомарно: звільняє mutex І блокує потік.
             // Коли прийде wakeOne() — знову захоплює mutex і продовжує.
             // Умова: чекаємо поки черга НЕ порожня АБО зупинено
-            while (m_queue.isEmpty() && m_running.load()) {
+            while (m_queue.isEmpty() && m_running) {
                 m_condition.wait(&m_mutex);
             }
 
-            if (!m_running.load() && m_queue.isEmpty()) break;
+            if (!m_running && m_queue.isEmpty()) {
+                qDebug() << "[TaskQueue process]" << threadId() << this << "Not running and queue is empty. Exiting...";
+                break;
+            }
             task = m_queue.dequeue();
+            qDebug() << "[TaskQueue process]" << threadId() << this << "Dequeue task" << task.id << "for" << task.filename << ". Mutex unlocked!";
         } // mutex звільняється тут — обробка іде без блокування черги
 
         // Обробляємо задачу ПОЗА mutex — інші потоки можуть enqueue()

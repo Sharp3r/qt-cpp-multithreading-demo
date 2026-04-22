@@ -4,9 +4,8 @@
 #include <QWaitCondition>
 #include <QQueue>
 #include <QString>
-#include <atomic>
 
-// DTO — описує одну задачу. Відокремлений від Worker.
+// DTO — описує одну задачу. Відокремлений від TaskQueue.
 struct Task {
     QString filename;
     int id;
@@ -26,20 +25,20 @@ public:
     // Додати задачу з БУДЬ-ЯКОГО потоку (thread-safe)
     void enqueue(const Task& task);
 
-    // Зупинити чергу
-    void stop();
-
 public slots:
     // Цей слот викличеться в потоці, куди переміщено об'єкт
     void process();
+
+    // Зупинити чергу
+    void stop();
 
 signals:
     void taskCompleted(int id, const QString& result);
     void allDone();
 
 private:
-    QMutex         m_mutex;
+    QMutex m_mutex;
     QWaitCondition m_condition;
-    QQueue<Task>   m_queue;
-    std::atomic<bool> m_running{true};
+    QQueue<Task> m_queue;
+    bool m_running{true};
 };
