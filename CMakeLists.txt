@@ -25,6 +25,7 @@ target_link_libraries(threading_demo
         Qt6::Qml
         controller
         worker
+        task_queue
         demo_uiplugin
 )
 
