@@ -66,13 +66,21 @@ void TaskQueue::process()
             qDebug() << "[TaskQueue process]" << threadId() << this << "Dequeue task" << task.id << "for" << task.filename << ". Mutex unlocked!";
         } // mutex звільняється тут — обробка іде без блокування черги
 
+        emit taskStarted(task.id);
+
         // Обробляємо задачу ПОЗА mutex — інші потоки можуть enqueue()
         QFileInfo info(task.filename);
         QThread::msleep(500); // симуляція роботи
-        emit taskCompleted(task.id,
-                           info.exists()
-                               ? QString("OK: %1").arg(info.fileName())
-                               : QString("NOT FOUND: %1").arg(task.filename));
+
+        if (!info.exists()) {
+            emit taskFailed(task.id,
+                            QString("File not found: %1").arg(task.filename));
+        } else {
+            emit taskCompleted(task.id,
+                               QString("%1 (%2 bytes)")
+                                   .arg(info.fileName())
+                                   .arg(info.size()));
+        }
     }
 
     emit allDone();

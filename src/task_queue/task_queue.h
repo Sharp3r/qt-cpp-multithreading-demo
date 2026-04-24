@@ -41,6 +41,8 @@ public slots:
     void stop();
 
 signals:
+    void taskStarted(int id);
+    void taskFailed(int id, const QString& error);
     void taskCompleted(int id, const QString& result);
     void allDone();
 
