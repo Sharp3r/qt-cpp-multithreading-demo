@@ -9,6 +9,14 @@
 struct Task {
     QString filename;
     int id;
+
+    enum class State {
+        Pending,
+        Running,
+        Done,
+        Error
+    } state{State::Pending};
+    QString result;
 };
 
 // JUNIOR рівень: Worker — це звичайний QObject.
