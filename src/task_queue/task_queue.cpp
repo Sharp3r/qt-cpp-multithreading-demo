@@ -83,6 +83,7 @@ void TaskQueue::process()
         }
     }
 
+    qDebug() << "[TaskQueue process]" << threadId() << this << "Stopped!";
     emit allDone();
 }
 
