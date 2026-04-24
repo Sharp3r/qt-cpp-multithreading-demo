@@ -5,6 +5,7 @@ qt_add_qml_module(demo_ui
     VERSION 1.0
     QML_FILES
         Main.qml
+        TaskCard.qml
 )
 
 target_link_libraries(demo_ui
