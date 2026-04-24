@@ -29,6 +29,7 @@ public:
     QHash<int, QByteArray> roleNames() const override; // ← імена для QML
 
     void addTask(const Task& task);
+    void removeCompletedTasks();
     void updateTask(int id, Task::State state, const QString& result = {});
 
 private:

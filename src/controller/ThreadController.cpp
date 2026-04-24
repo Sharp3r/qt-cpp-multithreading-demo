@@ -88,6 +88,7 @@ void ThreadController::stopAll()
 
 void ThreadController::clearCompleted()
 {
+    m_model.removeCompletedTasks();
     setStatus("Cleared completed tasks");
 }
 

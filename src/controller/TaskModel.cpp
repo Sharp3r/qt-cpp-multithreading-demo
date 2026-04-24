@@ -51,6 +51,25 @@ void TaskModel::addTask(const Task& task)
     endInsertRows();
 }
 
+void TaskModel::removeCompletedTasks()
+{
+    auto isRemovable = [](const Task& t) {
+        return t.state == Task::State::Done ||
+               t.state == Task::State::Error;
+    };
+
+    // (опційно) швидка перевірка — щоб не робити reset даремно
+    if (!std::any_of(m_tasks.begin(), m_tasks.end(), isRemovable))
+        return;
+
+    beginResetModel();
+    m_tasks.erase(
+        std::remove_if(m_tasks.begin(), m_tasks.end(), isRemovable),
+        m_tasks.end()
+    );
+    endResetModel();
+}
+
 void TaskModel::updateTask(int id, Task::State state, const QString& result)
 {
     for (int i = 0; i < m_tasks.size(); ++i) {
