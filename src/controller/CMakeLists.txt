@@ -14,5 +14,5 @@ target_link_libraries(controller
     PUBLIC
         Qt6::Core
     PRIVATE
-        worker
+        task_queue
 )
