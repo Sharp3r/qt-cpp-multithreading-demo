@@ -1,6 +1,8 @@
 add_library(controller
     ThreadController.cpp
     ThreadController.h
+    TaskModel.cpp
+    TaskModel.h
 )
 
 target_include_directories(controller
