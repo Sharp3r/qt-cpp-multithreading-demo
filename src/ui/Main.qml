@@ -31,6 +31,7 @@ ApplicationWindow {
         // Заголовок
         Rectangle {
             Layout.fillWidth: true
+            Layout.minimumWidth: 420
             height: 44
             radius: 8
             color: colorPalette.headerColor
