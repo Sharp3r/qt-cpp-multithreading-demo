@@ -58,14 +58,12 @@ void ThreadController::startAll()
 
     // Ставимо всі pending задачі в чергу
     // (доступ до m_model — тільки з main thread, тут ок)
-    for (int i = 0; i < m_model.rowCount(); ++i) {
+    for (int i = 0; i < m_model.rowCount(); i++) {
         QModelIndex idx = m_model.index(i);
-        if (m_model.data(idx, TaskModel::StateRole).toInt() ==
-            static_cast<int>(Task::State::Pending))
-        {
+        if (m_model.data(idx, TaskModel::StateRole).toInt() == static_cast<int>(Task::State::Pending)) {
             Task t;
             t.filename = m_model.data(idx, TaskModel::FilenameRole).toString();
-            t.id = i; // спрощення; в реальному коді зберігати id в моделі
+            t.id = m_model.data(idx, TaskModel::IdRole).toInt();
             m_queue->enqueue(t);
         }
     }

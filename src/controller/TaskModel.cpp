@@ -18,6 +18,7 @@ QVariant TaskModel::data(const QModelIndex& index, int role) const
     const Task& t = m_tasks[index.row()];
     switch (role) {
         case FilenameRole: return t.filename;
+        case IdRole: return t.id;
         case StateRole: return static_cast<int>(t.state);
         case StateTextRole:
             switch (t.state) {
@@ -37,6 +38,7 @@ QHash<int, QByteArray> TaskModel::roleNames() const
 {
     return {
         {FilenameRole,  "filename"},
+        {IdRole,        "id"},
         {StateRole,     "state"},
         {StateTextRole, "stateText"},
         {ResultRole,    "result"}

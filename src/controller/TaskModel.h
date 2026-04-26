@@ -16,6 +16,7 @@ public:
     // model.filename, model.stateText, model.result
     enum Roles {
         FilenameRole  = Qt::UserRole + 1,
+        IdRole,
         StateRole,
         StateTextRole,
         ResultRole
