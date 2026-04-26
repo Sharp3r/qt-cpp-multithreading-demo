@@ -59,14 +59,13 @@ ApplicationWindow {
                 placeholderText: "File path..."
                 text: "test.txt"
                 font.pixelSize: 13
-
                 onAccepted: addFile()
             }
 
             Button {
                 text: "Add"
-                onClicked: addFile()
                 enabled: !controller.running
+                onClicked: addFile()
             }
         }
 
