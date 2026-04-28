@@ -1,6 +1,8 @@
 add_library(controller
     ThreadController.cpp
     ThreadController.h
+    TaskModel.cpp
+    TaskModel.h
 )
 
 target_include_directories(controller
@@ -12,5 +14,5 @@ target_link_libraries(controller
     PUBLIC
         Qt6::Core
     PRIVATE
-        worker
+        task_queue
 )

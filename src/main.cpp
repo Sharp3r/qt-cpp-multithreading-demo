@@ -1,11 +1,13 @@
-#include "ThreadController.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include "threadcontroller.h"
 
 int main(int argc, char* argv[])
 {
     QGuiApplication app(argc, argv);
+
+    ThreadController controller;
 
     QQmlApplicationEngine engine;
 

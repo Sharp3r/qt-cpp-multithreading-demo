@@ -7,10 +7,17 @@ import ThreadingDemo 1.0
 ApplicationWindow {
     id: root
 
-    width: 600
-    height: 420
+    width: 640
+    height: 560
     visible: true
-    title: "Threading Demo — Trainee"
+    title: "Threading Demo — Junior"
+
+    function addFile() {
+        if (fileInput.text.trim() !== "") {
+            controller.addFile(fileInput.text)
+            fileInput.clear()
+        }
+    }
 
     ThreadController {
         id: controller
@@ -18,28 +25,29 @@ ApplicationWindow {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 24
-        spacing: 16
+        anchors.margins: 20
+        spacing: 12
 
-        // Header
+        // Заголовок
         Rectangle {
             Layout.fillWidth: true
+            Layout.minimumWidth: 420
             height: 44
             radius: 8
-            color: colorPalette.lvlHeader
-            border.color: colorPalette.lvlHeaderBorder
+            color: colorPalette.headerColor
+            border.color: colorPalette.headerBorderColor
             border.width: 1
 
             Text {
                 anchors.centerIn: parent
-                font.pixelSize: 15
+                text: "Junior — Worker object + QMutex + QAbstractListModel"
+                font.pixelSize: 14
                 font.weight: Font.Medium
-                color: colorPalette.lvlHeaderText
-                text: "Trainee — QThread subclass"
+                color: colorPalette.headerTextColor
             }
         }
 
-        // Enter field
+        // Додавання файлів
         RowLayout {
             Layout.fillWidth: true
             spacing: 8
@@ -48,129 +56,104 @@ ApplicationWindow {
                 id: fileInput
 
                 Layout.fillWidth: true
-                placeholderText: "Шлях до файлу, напр. test.txt"
+                placeholderText: "File path..."
                 text: "test.txt"
-                font.pixelSize: 14
-                enabled: !controller.running
+                font.pixelSize: 13
+                onAccepted: addFile()
             }
 
             Button {
-                text: controller.running ? "Stop" : "Start"
+                text: "Add"
+                enabled: !controller.running
+                onClicked: addFile()
+            }
+        }
+
+        // Кнопки управління
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+
+            Button {
+                text: "Start All"
+                enabled: !controller.running
+                onClicked: controller.startAll()
+            }
+
+            Button {
+                text: "Stop"
+                enabled: controller.running
+                onClicked: controller.stopAll()
+            }
+
+            Button {
+                text: "Clear Ready Files"
+                enabled: !controller.running
+                onClicked: controller.clearCompleted()
+            }
+        }
+
+        // Список задач — підключений до TaskModel через model: controller.taskModel
+        ListView {
+            id: taskList
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: 6
+            clip: true
+            model: controller.taskModel   // ← QAbstractListModel з C++
+
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AsNeeded
+            }
+
+            delegate: TaskCard {}         // ← наш компонент картки
+
+            // Плавна поява нових елементів
+            add: Transition {
+                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 200 }
+                NumberAnimation { property: "y"; from: -20; duration: 100 }
+            }
+
+            Text {
+                anchors.centerIn: parent
+                visible: taskList.count === 0
+                text: "Add files to process"
+                color: colorPalette.listTextColor
                 font.pixelSize: 13
-
-                background: Rectangle {
-                    radius: 6
-                    color: controller.running ? colorPalette.controllerStop :
-                                                colorPalette.controllerStart
-                }
-
-                contentItem: Text {
-                    text: parent.text
-                    color: "white"
-                    font: parent.font
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                onClicked: {
-                    if (controller.running)
-                        controller.stopProcessing()
-                    else
-                        controller.startProcessing(fileInput.text)
-                }
             }
         }
 
-        // Progress Bar
+        // Статус бар
         Rectangle {
             Layout.fillWidth: true
-            height: 8
-            radius: 4
-            color: colorPalette.border
-
-            Rectangle {
-                width: parent.width * (controller.progress / 100)
-                height: parent.height
-                radius: 4
-                color: colorPalette.accent
-
-                Behavior on width {
-                    NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
-                }
-            }
-        }
-
-        Text {
-            font.pixelSize: 13
-            color: colorPalette.controllerProgress
-            text: controller.progress + "%"
-        }
-
-        // Status
-        Rectangle {
-            Layout.fillWidth: true
-            height: 48
+            height: 36
             radius: 8
-            color: colorPalette.bgPanel
-            border.color: colorPalette.border
+            color: colorPalette.statusBarColor
+            border.color: colorPalette.statusBarBorderColor
             border.width: 1
 
             Text {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                    margins: 14
-                }
-                font.pixelSize: 13
-                color: colorPalette.controllerStatusText
-                elide: Text.ElideRight
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.margins: 12
+                font.pixelSize: 12
+                color: colorPalette.statusBarTextColor
                 text: controller.status
             }
         }
-
-        // Explanation Text
-        Rectangle {
-            Layout.fillWidth: true
-            height: explanationText.implicitHeight + 24
-            radius: 8
-            color: colorPalette.explBg
-            border.color: colorPalette.explBorder
-            border.width: 1
-
-            Text {
-                id: explanationText
-
-                anchors.fill: parent
-                anchors.margins: 12
-                font.pixelSize: 12
-                color: colorPalette.explText
-                wrapMode: Text.WordWrap
-                lineHeight: 1.5
-                text: "Механізм: WorkerThread::run() виконується в окремому потоці.\n" +
-                      "Q_PROPERTY + NOTIFY → QML binding оновлюється автоматично.\n" +
-                      "atomic<bool> m_stopRequested — thread-safe флаг скасування."
-            }
-        }
-
-        Item { Layout.fillHeight: true }
     }
 
     QtObject {
         id: colorPalette
 
-        readonly property color accent: "#1D9E75"
-        readonly property color bgPanel: "#F8F8F6"
-        readonly property color border: "#E0E0DC"
-        readonly property color lvlHeader: "#E1F5EE"
-        readonly property color lvlHeaderBorder: "#9FE1CB"
-        readonly property color lvlHeaderText: "#085041"
-        readonly property color controllerStop: "#F0997B"
-        readonly property color controllerStart: "#1D9E75"
-        readonly property color controllerProgress: "#5F5E5A"
-        readonly property color controllerStatusText: "#444441"
-        readonly property color explBg: "#FAEEDA"
-        readonly property color explBorder: "#FAC775"
-        readonly property color explText: "#633806"
+        readonly property color headerColor: "#E6F1FB"
+        readonly property color headerBorderColor: "#B5D4F4"
+        readonly property color headerTextColor: "#0C447C"
+        readonly property color listTextColor: "#888780"
+        readonly property color statusBarColor: "#F1EFE8"
+        readonly property color statusBarBorderColor: "#D3D1C7"
+        readonly property color statusBarTextColor: "#5F5E5A"
+
     }
 }

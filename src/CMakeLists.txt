@@ -1,5 +1,6 @@
 add_subdirectory(controller)
 add_subdirectory(worker)
+add_subdirectory(task_queue)
 add_subdirectory(ui)
 
 target_sources(threading_demo
