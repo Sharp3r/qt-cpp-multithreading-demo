@@ -112,7 +112,7 @@ ApplicationWindow {
             // Плавна поява нових елементів
             add: Transition {
                 NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 200 }
-                NumberAnimation { property: "y"; from: -20; to: 0; duration: 200 }
+                NumberAnimation { property: "y"; from: -20; duration: 100 }
             }
 
             Text {
