@@ -88,6 +88,7 @@ ApplicationWindow {
 
             Button {
                 text: "Clear Ready Files"
+                enabled: !controller.running
                 onClicked: controller.clearCompleted()
             }
         }
