@@ -7,13 +7,13 @@
 
 ## Рівні складності
 
-| Рівень | Підхід | Ключова концепція |
-|--------|--------|-------------------|
-| Trainee | `QThread` subclass | `run()`, `atomic<bool>` |
-| Junior | Worker + `moveToThread` | `QMutex`, `QWaitCondition`, `QAbstractListModel` |
-| Middle | `QThreadPool` + `QRunnable` | Thread pool, `QFuture`, `QtConcurrent` |
-| Senior | `std::future` + `promise` | `shared_mutex`, RAII, lock-free |
-| Senior+ | Custom priority pool | `condition_variable`, cancellation token |
+| Рівень | Підхід | Ключова концепція | Готовність |
+|--------|--------|-------------------|------------|
+| Trainee | `QThread` subclass | `run()`, `atomic<bool>` |✅|
+| Junior | Worker + `moveToThread` | `QMutex`, `QWaitCondition`, `QAbstractListModel` |✅|
+| Middle | `QThreadPool` + `QRunnable` | Thread pool, `QFuture`, `QtConcurrent` |☐|
+| Senior | `std::future` + `promise` | `shared_mutex`, RAII, lock-free |☐|
+| Senior+ | Custom priority pool | `condition_variable`, cancellation token |☐|
 
 ## Стек
 
@@ -56,19 +56,19 @@ cmake --build . -j$(nproc)
 │   └── task_queue.h/cpp         ← Junior: mutex + wait condition
 ├── task_processor/
 │   ├── CMakeLists.txt
-│   └── task_processor.h/cpp     ← Middle: QThreadPool
+│   └── task_processor.h/cpp     ← Middle: QThreadPool (TBD)
 ├── advanced_processor/
 │   ├── CMakeLists.txt
-│   └── advanced_processor.h/cpp ← Senior: std::future + cache
+│   └── advanced_processor.h/cpp ← Senior: std::future + cache (TBD)
 ├── thread_pool/
 │   ├── CMakeLists.txt
-│   └── thread_pool.h/cpp        ← Senior+: custom priority pool
+│   └── thread_pool.h/cpp        ← Senior+: custom priority pool (TBD)
 └── ui/                          ← весь UI
     ├── Main.qml
     ├── TaskCard.qml
-    ├── ThreadPoolView.qml
-    ├── CacheStats.qml
-    └── PriorityQueue.qml
+    ├── ThreadPoolView.qml (TBD)
+    ├── CacheStats.qml (TBD)
+    └── PriorityQueue.qml (TBD)
 ```
 
 ## Ліцензія
